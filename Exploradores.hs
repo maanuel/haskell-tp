@@ -164,25 +164,36 @@ ifExp f exp1 exp2 = (\x -> if f x then (exp1 x) else (exp2 x))
 --filter' i n l xs | ((toInteger (length xs)) == (l-1) ) = []
 --filter' i n l xs | otherwise =  ((n-i) : xs)
 
-listasQueSumanHasta n = foldNat f [[]] n
-            where f = (\n recu -> [ ((n-sum(xs):xs)) | xs <- recu ] ++ recu)
+--listasQueSumanHasta n = foldNat f [[]] n
+--            where f = (\n recu -> [ ((n-sum(xs):xs)) | xs <- recu ] ++ recu)
 
-suma l xs | sum(xs) == l = True
-             | otherwise = False
+--suma l xs | sum(xs) == l = True
+--           | otherwise = False
 
 
-listasQueSuman' n = filter (suma n) (listasQueSumanHasta n)
+--listasQueSuman' n = filter (suma n) (listasQueSumanHasta n)
 
-iguales l xs | (toInteger (length xs))== l = True
-             | otherwise = False
+--iguales l xs | (toInteger (length xs))== l = True
+--             | otherwise = False
+
 
 --listita :: Explorador Integer [Integer]
-listita l = [ xs | n<-[l..], xs <- (filter (iguales l) (listasQueSuman' n))]
+--listita l = [ xs | n<-[l..], xs <- (filter (iguales l) (listasQueSuman' n))]
+
+upperbound :: Integer -> Integer
+upperbound l = if (even l) then (l `div` 2) else ((l-1) `div` 2) 
+
+listasQueSuman' :: Integer -> Integer -> [[Integer]]
+listasQueSuman' n 1 = [[n]]
+listasQueSuman' n l = [ x ++ y | i <-[1..(upperbound l)], j <-[1..(n-l+i)], x <-( listasQueSuman' j i), y<-( listasQueSuman' (n-j) (l-i))  ] 
+
+listasQueSuman'' :: Integer -> Integer -> [[Integer]]
+listasQueSuman'' n 1 = [[n]]
+listasQueSuman'' n l = [ xs ++ ys | i <- [(l-1)..(n-1)], xs <- (listasQueSuman'' i  (l-1)) , ys<- (listasQueSuman'' (n-i) 1)]
 
 --Ejercicio 11 (implementar al menos una de las dos)
 listasDeLongitud :: Explorador Integer [Integer]
---listasDeLongitud = undefined
-listasDeLongitud = (\l -> (listita l))
+listasDeLongitud l = [ xs | n<-[l..], xs <- (listasQueSuman'' n l) ]
 
 (<*>) :: Explorador a a -> Explorador a [a] 
 (<*>) = undefined
