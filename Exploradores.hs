@@ -186,9 +186,25 @@ listasQueSuman' :: Integer -> Integer -> [[Integer]]
 listasQueSuman' n 1 = [[n]]
 listasQueSuman' n l = [ x ++ y | i <-[1..(upperbound l)], j <-[1..(n-l+i)], x <-( listasQueSuman' j i), y<-( listasQueSuman' (n-j) (l-i))  ] 
 
+
+--foldNat :: ( Integer -> b -> b) -> b -> Integer -> b
+--foldNat f b 0 = b
+--foldNat f b x = f x ( foldNat f b (x-1))
+
+--foldNat f b (l-1) = 
+--foldNat f b i = f i (foldNat f b (i-1))
+
+--lo paso con esto (n-1)-(l-1)
+--f x -> x + (l-1)
+
+--lQS'' 7 3 = foldNat f b ((n-1) - (l-1)) = foldNat f b 4 = f 4 (foldNat f b 3)
+
+--f 4 -> 4 +2 
+
+-- listasQueSuman'' = foldNat f b ((n-1)-(l-1))
 listasQueSuman'' :: Integer -> Integer -> [[Integer]]
 listasQueSuman'' n 1 = [[n]]
-listasQueSuman'' n l = [ xs ++ ys | i <- [(l-1)..(n-1)], xs <- (listasQueSuman'' i  (l-1)) , ys<- (listasQueSuman'' (n-i) 1)]
+listasQueSuman'' n l = [ xs ++ [n-i]| i <- [(l-1)..(n-1)], xs <- (listasQueSuman'' i  (l-1))]
 
 --Ejercicio 11 (implementar al menos una de las dos)
 listasDeLongitud :: Explorador Integer [Integer]
