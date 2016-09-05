@@ -157,11 +157,31 @@ ifExp f exp1 exp2 = (\x -> if f x then (exp1 x) else (exp2 x))
 (<^>) :: Explorador a a -> Integer -> Explorador a a
 (<^>) exp n = foldNat (\x rec -> ( (<.>) exp rec ) ) exp (n-1)
 
-listita :: Explorador Integer [Integer]
-listita l = [ xs | n<-[l..], xs <-(listasQueSuman n), (toInteger (length xs))== l]
+
+--listasQueSuman' 0 l = [[]]
+--listasQueSuman' n l = concat[ map (filter' i n l) (listasQueSuman' i l) | i <-[0..(n-1)] ]
+                           
+--filter' i n l xs | ((toInteger (length xs)) == (l-1) ) = []
+--filter' i n l xs | otherwise =  ((n-i) : xs)
+
+listasQueSumanHasta n = foldNat f [[]] n
+            where f = (\n recu -> [ ((n-sum(xs):xs)) | xs <- recu ] ++ recu)
+
+suma l xs | sum(xs) == l = True
+             | otherwise = False
+
+
+listasQueSuman' n = filter (suma n) (listasQueSumanHasta n)
+
+iguales l xs | (toInteger (length xs))== l = True
+             | otherwise = False
+
+--listita :: Explorador Integer [Integer]
+listita l = [ xs | n<-[l..], xs <- (filter (iguales l) (listasQueSuman' n))]
 
 --Ejercicio 11 (implementar al menos una de las dos)
 listasDeLongitud :: Explorador Integer [Integer]
+--listasDeLongitud = undefined
 listasDeLongitud = (\l -> (listita l))
 
 (<*>) :: Explorador a a -> Explorador a [a] 
