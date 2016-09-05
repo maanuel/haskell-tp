@@ -78,12 +78,11 @@ listasQueSuman n = concat[ map ((:) (n-i)) (listasQueSuman i) | i <-[0..(n-1)] ]
 
 --Ejercicio 5
 --preorder :: undefined
-preorder Nil = []
-preorder (Bin izq val der) = [val]++(preorder izq)++(preorder der)
+preorder :: Explorador (AB a) a
+preorder = foldAB (\x i d -> [x]++i++d) []
 
 inorder :: Explorador (AB a) a
-inorder Nil = []
-inorder (Bin i x d) = foldAB (\x y z -> y ++ [x] ++ z) [] (Bin i x d) 
+inorder = foldAB (\x i d -> i ++ [x] ++ d) []
 
 -- postorder con recursion explicita:
 -- postorder Nil = []
