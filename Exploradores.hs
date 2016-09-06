@@ -71,22 +71,26 @@ sufijos :: Explorador [a] [a]
 sufijos = foldr (\x (y:ys) -> [x:y]++(y:ys)) [[]] 
 
 --Ejercicio 4
--- HACERLA SIN RECURSION EXPLICITA!!!!!!!!!!!!!!!!!!
+-- versión con recursión explicita
+-- usar el esquema de fold no nos parecía conveniente porque necesitabamos
+-- no solo el resultado anterior, sino todos los anteriores. 
 listasQueSuman :: Explorador Integer [Integer]
 listasQueSuman 0 = [[]]
 listasQueSuman n = concat[ map ((:) (n-i)) (listasQueSuman i) | i <-[0..(n-1)] ]
 
+-- intento con fold
+-- listasQueSumanHasta si arrastra los resultados anteriores.
+--listasQueSumanHasta n = foldNat f [[]] n
+--            where f = (\n recu -> [ ((n-sum(xs):xs)) | xs <- recu ] ++ recu)
+--listasQueSuman' n = filter (suma n) (listasQueSumanHasta n)
+
+
 --Ejercicio 5
---preorder :: undefined
 preorder :: Explorador (AB a) a
 preorder = foldAB (\x i d -> [x]++i++d) []
 
 inorder :: Explorador (AB a) a
 inorder = foldAB (\x i d -> i ++ [x] ++ d) []
-
--- postorder con recursion explicita:
--- postorder Nil = []
--- postorder (Bin izq val der) = (postorder izq) ++ (postorder der) ++ [val]
 
 -- toma un arbol binario de tipo a y devuelve una lista con elementos de tipo a
 postorder :: Explorador (AB a) a 
@@ -96,10 +100,6 @@ postorder = foldAB (\x i d -> i ++ d ++ [x]) []
 --Ejercicio 6
 dfsRT :: Explorador (RoseTree a) a
 dfsRT = foldRT (\x y  -> x : (concat y) )
-
--- hojasRT con recursion explicita
---hojasRT (Rose x []) = [x]
---hojasRT (Rose x ys) = concat(map hojasRT ys)
 
 fRT x [] = [x]
 fRT x lss = concat lss
@@ -147,7 +147,6 @@ ifExp f exp1 exp2 = (\x -> if f x then (exp1 x) else (exp2 x))
 (<++>) :: Explorador a b -> Explorador a b -> Explorador a b
 (<++>) f1 f2 = \x -> (f1 x) ++ (f2 x)
 
-
 --Ejercicio 9
 (<.>) :: Explorador b c -> Explorador a b -> Explorador a c
 (<.>) = (\f g x -> concat (map f (g x) ))
@@ -156,60 +155,20 @@ ifExp f exp1 exp2 = (\x -> if f x then (exp1 x) else (exp2 x))
 (<^>) :: Explorador a a -> Integer -> Explorador a a
 (<^>) exp n = foldNat (\x rec -> ( (<.>) exp rec ) ) exp (n-1)
 
-
---listasQueSuman' 0 l = [[]]
---listasQueSuman' n l = concat[ map (filter' i n l) (listasQueSuman' i l) | i <-[0..(n-1)] ]
-                           
---filter' i n l xs | ((toInteger (length xs)) == (l-1) ) = []
---filter' i n l xs | otherwise =  ((n-i) : xs)
-
---listasQueSumanHasta n = foldNat f [[]] n
---            where f = (\n recu -> [ ((n-sum(xs):xs)) | xs <- recu ] ++ recu)
-
---suma l xs | sum(xs) == l = True
---           | otherwise = False
-
-
---listasQueSuman' n = filter (suma n) (listasQueSumanHasta n)
-
---iguales l xs | (toInteger (length xs))== l = True
---             | otherwise = False
-
-
---listita :: Explorador Integer [Integer]
---listita l = [ xs | n<-[l..], xs <- (filter (iguales l) (listasQueSuman' n))]
-
-upperbound :: Integer -> Integer
-upperbound l = if (even l) then (l `div` 2) else ((l-1) `div` 2) 
-
-listasQueSuman' :: Integer -> Integer -> [[Integer]]
-listasQueSuman' n 1 = [[n]]
-listasQueSuman' n l = [ x ++ y | i <-[1..(upperbound l)], j <-[1..(n-l+i)], x <-( listasQueSuman' j i), y<-( listasQueSuman' (n-j) (l-i))  ] 
-
-
---foldNat :: ( Integer -> b -> b) -> b -> Integer -> b
---foldNat f b 0 = b
---foldNat f b x = f x ( foldNat f b (x-1))
-
---foldNat f b (l-1) = 
---foldNat f b i = f i (foldNat f b (i-1))
-
---lo paso con esto (n-1)-(l-1)
---f x -> x + (l-1)
-
---lQS'' 7 3 = foldNat f b ((n-1) - (l-1)) = foldNat f b 4 = f 4 (foldNat f b 3)
-
---f 4 -> 4 +2 
-
--- listasQueSuman'' = foldNat f b ((n-1)-(l-1))
+-- auxiliar para listasDeLongitud
+-- esta listasQueSuman'' admite tambien una longitud deseada.
+-- si usamos la original el algoritmo demora más de lo deseado.
 listasQueSuman'' :: Integer -> Integer -> [[Integer]]
 listasQueSuman'' n 1 = [[n]]
 listasQueSuman'' n l = [ xs ++ [n-i]| i <- [(l-1)..(n-1)], xs <- (listasQueSuman'' i  (l-1))]
 
 --Ejercicio 11 (implementar al menos una de las dos)
+
+-- No pudimos pasar la recursión explicita a un esquema de recursión (dentro de listasQueSuman'')
+-- por eso resolvimos el siguiente sin recursión explícita.
 listasDeLongitud :: Explorador Integer [Integer]
 listasDeLongitud l = [ xs | n<-[l..], xs <- (listasQueSuman'' n l) ]
 
-(<*>) :: Explorador a a -> Explorador a [a] 
-(<*>) = undefined
-
+(<*>) :: Explorador b b -> Explorador b [b] 
+(<*>) f = g
+		where g a = takeWhile (\x -> not (null x)) (iterate ( \lsA -> concat ( map f lsA)) [a])
