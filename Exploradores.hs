@@ -174,19 +174,33 @@ listasDeLongitud l = [ xs | n<-[l..], xs <- (listasQueSuman'' n l) ]
 (<*>) f = g
         where g a = takeWhile (\x -> not (null x)) (iterate ( \lsA -> concat ( map f lsA)) [a])
 
+-- Ejercicio 1
 testExpNulo = TestCase (assertEqual "resultado de expNulo," ([] :: [[Bool]]) (expNulo (\x -> [])))
 testExpId = TestCase (assertEqual "resultado de expId," ([True]) (expId True) )
 testExpHijosRT = TestCase (assertEqual "Resultado de expHijosRT," (  [Rose 3 [(Rose 2 [])]]  ) (expHijosRT (Rose 5 [(Rose 3 [(Rose 2 [])])]) ) )
 testExpHijosAB = TestCase (assertEqual "Resultado expHijosAB," ([(Bin Nil 3 Nil), Nil])  (expHijosAB (Bin (Bin Nil 3 Nil) 2 Nil)) )
 testExpTail = TestCase (assertEqual "Resultado expTail," ([2,3]) (expTail [1,2,3]) ) 
 
+--Ejercicio 3
+testSingletons = TestCase (assertEqual "resultado de singletons, " ([ [[9,10]] ,[[10]] ]) (singletons [[9,10], [10]]))
+testSufijos = TestCase (assertEqual "resultado de sufijos," ([[1,2,3], [2,3], [3], [] ]) (sufijos [1,2,3]))
 
+--Ejercicio 4
+testListasQueSuman = TestCase( assertEqual "resultado de listasQueSuman," ([[2], [1,1]]) (listasQueSuman 2))
+
+-- test = TestCase( assertEqual "resultado de ," () ())
+-- Las funciones folds no las testeamos directamente, ya son testeadas con los ejercicios
+-- que las usan.
 tests = TestList [TestLabel "expNulo" testExpNulo, 
                   TestLabel "expId" testExpId,
                   TestLabel "expHijosRT" testExpHijosRT,
                   TestLabel "expHijosAB" testExpHijosAB,
-                  TestLabel "expTail" testExpTail
+                  TestLabel "expTail" testExpTail,
+                  TestLabel "singletons" testSingletons,
+                  TestLabel "sufijos" testSufijos,
+                  TestLabel "listasQueSuman" testListasQueSuman
                 ]
+
 
 main :: IO Counts
 main = do runTestTT tests
