@@ -214,6 +214,15 @@ testMasMas = TestCase (assertEqual "resultado de ++, " ([10,20])  ( ((\x -> [x*5
 --Ejercicio 9
 testPunto = TestCase ( assertEqual "resultado <.>," ([1,1,1,2,1,3,1,4,1,5]) (  (<.>) ((:) 1) singletons [1,2,3,4,5] ) )
 
+--ejercicio 10
+arbol1 = (Rose 2 [ (Rose 5[]) , (Rose 6 []), (Rose 7 [])])
+arbol2 = (Rose 3 [ (Rose 8[]) , (Rose 9 []), (Rose 10 [])])
+arbol3 =  (Rose 4 [ (Rose 11[]) , (Rose 12 []), (Rose 13 [])])
+arbolRaiz = (Rose 1 [arbol1,arbol2,arbol3])
+
+testPotencia = TestCase (assertEqual "resultado de ^, " ([ (Rose 5 []) , (Rose 6 []), (Rose 7 []),(Rose 8[]) , (Rose 9 []), (Rose 10 []),(Rose 11[]) , (Rose 12 []), (Rose 13 [])])  ( (expHijosRT <^> 2) arbolRaiz) )
+
+
 --ejercicio 11
 testAsterisco = TestCase (assertEqual "resultado de *," ([ [(Rose 1 [(Rose 2 []),(Rose 3 [])])], [(Rose 2 []), (Rose 3 [])] ]) ((<*>) expHijosRT (Rose 1 [(Rose 2 []),(Rose 3 [])])))
 
@@ -238,9 +247,9 @@ tests = TestList [TestLabel "expNulo" testExpNulo,
                   TestLabel "postorder" testPostorder,
                   TestLabel "ifExpTrue" testIfExpTrue,
                   TestLabel "ifExpFalse" testIfExpFalse,
-                  TestLabel "punto" testPunto
+                  TestLabel "punto" testPunto,
+                  TestLabel "potencia" testPotencia
                 ]
-
 
 
 
