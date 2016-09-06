@@ -1,6 +1,7 @@
 module Exploradores (Explorador, AB(Nil,Bin), RoseTree(Rose), foldNat, foldRT, foldAB, expNulo, expId, expHijosRT, expHijosAB, expTail, ifExp, singletons, sufijos, inorder, preorder, postorder, dfsRT, ramasRT, hojasRT, listasQueSuman, listasDeLongitud, (<.>), (<^>), (<++>), (<*>)) where
 
 import Prelude hiding ((<*>))
+import Test.HUnit
 
 --Definiciones de tipos
 
@@ -171,4 +172,21 @@ listasDeLongitud l = [ xs | n<-[l..], xs <- (listasQueSuman'' n l) ]
 
 (<*>) :: Explorador b b -> Explorador b [b] 
 (<*>) f = g
-		where g a = takeWhile (\x -> not (null x)) (iterate ( \lsA -> concat ( map f lsA)) [a])
+        where g a = takeWhile (\x -> not (null x)) (iterate ( \lsA -> concat ( map f lsA)) [a])
+
+testExpNulo = TestCase (assertEqual "resultado de expNulo," ([] :: [[Bool]]) (expNulo (\x -> [])))
+testExpId = TestCase (assertEqual "resultado de expId," ([True]) (expId True) )
+testExpHijosRT = TestCase (assertEqual "Resultado de expHijosRT," (  [Rose 3 [(Rose 2 [])]]  ) (expHijosRT (Rose 5 [(Rose 3 [(Rose 2 [])])]) ) )
+testExpHijosAB = TestCase (assertEqual "Resultado expHijosAB," ([(Bin Nil 3 Nil), Nil])  (expHijosAB (Bin (Bin Nil 3 Nil) 2 Nil)) )
+testExpTail = TestCase (assertEqual "Resultado expTail," ([2,3]) (expTail [1,2,3]) ) 
+
+
+tests = TestList [TestLabel "expNulo" testExpNulo, 
+                  TestLabel "expId" testExpId,
+                  TestLabel "expHijosRT" testExpHijosRT,
+                  TestLabel "expHijosAB" testExpHijosAB,
+                  TestLabel "expTail" testExpTail
+                ]
+
+main :: IO Counts
+main = do runTestTT tests
