@@ -174,6 +174,12 @@ listasDeLongitud l = [ xs | n<-[l..], xs <- (listasQueSuman'' n l) ]
 (<*>) f = g
         where g a = takeWhile (\x -> not (null x)) (iterate ( \lsA -> concat ( map f lsA)) [a])
 
+-- **** Tests ****
+-- auxiliar para un test
+isRose :: RoseTree a -> Bool
+isRose (Rose x []) = True
+isRose (Rose x l) = False
+
 -- Ejercicio 1
 testExpNulo = TestCase (assertEqual "resultado de expNulo," ([] :: [[Bool]]) (expNulo (\x -> [])))
 testExpId = TestCase (assertEqual "resultado de expId," ([True]) (expId True) )
@@ -188,16 +194,29 @@ testSufijos = TestCase (assertEqual "resultado de sufijos," ([[1,2,3], [2,3], [3
 --Ejercicio 4
 testListasQueSuman = TestCase( assertEqual "resultado de listasQueSuman," ([[2], [1,1]]) (listasQueSuman 2))
 
+--Ejercicio 5
+testPreorder = TestCase ( assertEqual "resultado preorder," ([1, 2, 4, 5, 3, 6, 7]) (preorder (Bin (Bin (Bin Nil 4 Nil) 2 (Bin Nil 5 Nil)) 1 (Bin (Bin Nil 6 Nil) 3 (Bin Nil 7 Nil)))))
+testInorder = TestCase ( assertEqual " resultado inorder," ([4, 2, 5, 1, 6, 3, 7]) (inorder (Bin (Bin (Bin Nil 4 Nil) 2 (Bin Nil 5 Nil)) 1 (Bin (Bin Nil 6 Nil) 3 (Bin Nil 7 Nil)))))
+testPostorder = TestCase ( assertEqual "resultado postorder," ([4, 5, 2, 6, 7, 3, 1]) (postorder (Bin (Bin (Bin Nil 4 Nil) 2 (Bin Nil 5 Nil)) 1 (Bin (Bin Nil 6 Nil) 3 (Bin Nil 7 Nil)))))
+
 -- Ejercicio 6
 testDfsRT = TestCase( assertEqual "resultado de dfsRT," ([1,2,1,1]) (dfsRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])]) ))
 testHojasRT = TestCase( assertEqual "resultado de hojasRT," ([1,1]) (hojasRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])])) )
 testRamasRT = TestCase (assertEqual "resultado de ramasRT," ([[1,2,1],[1,1]]) (ramasRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])])))
 
+--Ejercicio 7
+testIfExpTrue = TestCase ( assertEqual "resultado ifExp," ([2]) (ifExp isRose dfsRT hojasRT (Rose 2 [])) )
+testIfExpFalse = TestCase ( assertEqual "resultado ifExp," ([3,1,2]) ( ifExp isRose dfsRT hojasRT (Rose 5 [(Rose 3 []), (Rose 4 [ (Rose 1 [])]), (Rose 2 [])]) ) )
+
 -- Ejercicio 8
 testMasMas = TestCase (assertEqual "resultado de ++, " ([10,20])  ( ((\x -> [x*5]) <++> (\y -> [y*10])) 2)  )
 
+--Ejercicio 9
+testPunto = TestCase ( assertEqual "resultado <.>," ([1,1,1,2,1,3,1,4,1,5]) (  (<.>) ((:) 1) singletons [1,2,3,4,5] ) )
+
 --ejercicio 11
 testAsterisco = TestCase (assertEqual "resultado de *," ([ [(Rose 1 [(Rose 2 []),(Rose 3 [])])], [(Rose 2 []), (Rose 3 [])] ]) ((<*>) expHijosRT (Rose 1 [(Rose 2 []),(Rose 3 [])])))
+
 -- test = TestCase( assertEqual "resultado de ," () ())
 -- Las funciones folds no las testeamos directamente, ya son testeadas con los ejercicios
 -- que las usan.
@@ -213,8 +232,16 @@ tests = TestList [TestLabel "expNulo" testExpNulo,
                   TestLabel "hojasRT" testHojasRT,
                   TestLabel "ramasRT" testRamasRT,
                   TestLabel "++" testMasMas,
-                  TestLabel "*" testAsterisco
+                  TestLabel "*" testAsterisco,
+                  TestLabel "preorder" testPreorder,
+                  TestLabel "inorder" testInorder,
+                  TestLabel "postorder" testPostorder,
+                  TestLabel "ifExpTrue" testIfExpTrue,
+                  TestLabel "ifExpFalse" testIfExpFalse,
+                  TestLabel "punto" testPunto
                 ]
+
+
 
 
 main :: IO Counts
