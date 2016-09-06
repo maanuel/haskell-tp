@@ -188,6 +188,16 @@ testSufijos = TestCase (assertEqual "resultado de sufijos," ([[1,2,3], [2,3], [3
 --Ejercicio 4
 testListasQueSuman = TestCase( assertEqual "resultado de listasQueSuman," ([[2], [1,1]]) (listasQueSuman 2))
 
+-- Ejercicio 6
+testDfsRT = TestCase( assertEqual "resultado de dfsRT," ([1,2,1,1]) (dfsRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])]) ))
+testHojasRT = TestCase( assertEqual "resultado de hojasRT," ([1,1]) (hojasRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])])) )
+testRamasRT = TestCase (assertEqual "resultado de ramasRT," ([[1,2,1],[1,1]]) (ramasRT (Rose 1 [(Rose 2 [(Rose 1 [])]),  (Rose 1 [])])))
+
+-- Ejercicio 8
+testMasMas = TestCase (assertEqual "resultado de ++, " ([10,20])  ( ((\x -> [x*5]) <++> (\y -> [y*10])) 2)  )
+
+--ejercicio 11
+testAsterisco = TestCase (assertEqual "resultado de *," ([ [(Rose 1 [(Rose 2 []),(Rose 3 [])])], [(Rose 2 []), (Rose 3 [])] ]) ((<*>) expHijosRT (Rose 1 [(Rose 2 []),(Rose 3 [])])))
 -- test = TestCase( assertEqual "resultado de ," () ())
 -- Las funciones folds no las testeamos directamente, ya son testeadas con los ejercicios
 -- que las usan.
@@ -198,7 +208,12 @@ tests = TestList [TestLabel "expNulo" testExpNulo,
                   TestLabel "expTail" testExpTail,
                   TestLabel "singletons" testSingletons,
                   TestLabel "sufijos" testSufijos,
-                  TestLabel "listasQueSuman" testListasQueSuman
+                  TestLabel "listasQueSuman" testListasQueSuman,
+                  TestLabel "dfsRT" testDfsRT,
+                  TestLabel "hojasRT" testHojasRT,
+                  TestLabel "ramasRT" testRamasRT,
+                  TestLabel "++" testMasMas,
+                  TestLabel "*" testAsterisco
                 ]
 
 
